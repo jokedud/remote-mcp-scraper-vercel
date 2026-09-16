@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
     "socks",
     "undici",
   ],
+  // @sparticuz/chromium is intentionally externalized, but Next's output
+  // file tracing otherwise omits its brotli-packed Chromium binaries.
+  outputFileTracingIncludes: {
+    "/api/**/*": ["node_modules/@sparticuz/chromium/bin/**/*"],
+  },
 };
 
 export default nextConfig;
