@@ -14,7 +14,7 @@ const startedAt = Date.now();
 function text(data: unknown): CallToolResult { return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }], structuredContent: data as Record<string, unknown> }; }
 function fail(err: unknown): CallToolResult { const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err); return { isError: true, content: [{ type: "text", text: message }] }; }
 function rateKey(extra: { requestInfo?: { headers?: unknown } }): string { const h = extra.requestInfo?.headers; if (h && typeof h === "object") { const fwd = (h as Record<string, unknown>)["x-forwarded-for"]; const v = Array.isArray(fwd) ? fwd[0] : fwd; if (typeof v === "string" && v) return v.split(",")[0]!.trim(); } return "anonymous"; }
-function limited(extra: { requestInfo?: { headers?: unknown> } }): boolean { return !checkRateLimit(rateKey(extra)); }
+function limited(extra: { requestInfo?: { headers?: unknown } }): boolean { return !checkRateLimit(rateKey(extra)); }
 const RATE_LIMITED: CallToolResult = { isError: true, content: [{ type: "text", text: "rate_limited: too many tool calls" }] };
 
 export function createMcpServer(): McpServer {
