@@ -1,4 +1,4 @@
-import { captureActionGif, type ClipAction } from "../../../../lib/clip";
+import { captureActionGif, type ClipAction } from "../../../lib/clip";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
