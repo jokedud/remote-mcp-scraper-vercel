@@ -1,7 +1,7 @@
 /**
  * Bearer-token gate for the MCP endpoints.
  * Requests fail closed when MCP_AUTH_TOKEN is not configured or when the
- * required Authorization: Bearer header is missing or invalid.
+ * supplied credential is missing or invalid.
  */
 
 export function authorize(request: Request): Response | null {
@@ -9,7 +9,11 @@ export function authorize(request: Request): Response | null {
   const header = request.headers.get("authorization") ?? "";
   const bearer = /^Bearer\s+(.+)$/i.exec(header)?.[1]?.trim() ?? "";
 
-  if (token && bearer === token) return null;
+  const url = new URL(request.url);
+  const queryToken = url.searchParams.get("token") ?? url.searchParams.get("auth") ?? "";
+  const credential = bearer || queryToken;
+
+  if (token && credential === token) return null;
 
   return new Response(JSON.stringify({ error: "unauthorized" }), {
     status: 401,
