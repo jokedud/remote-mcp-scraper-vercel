@@ -1,21 +1,15 @@
 /**
- * Optional bearer-token gate for the MCP endpoints.
- * When MCP_AUTH_TOKEN is unset the endpoints are intentionally open
- * (documented in README); set it for anything public-facing.
+ * Bearer-token gate for the MCP endpoints.
+ * Requests fail closed when MCP_AUTH_TOKEN is not configured or when the
+ * required Authorization: Bearer header is missing or invalid.
  */
 
 export function authorize(request: Request): Response | null {
   const token = process.env.MCP_AUTH_TOKEN;
-  if (!token) return null; // open mode
-
-  const url = new URL(request.url);
   const header = request.headers.get("authorization") ?? "";
-  const bearer = header.toLowerCase().startsWith("bearer ")
-    ? header.slice(7).trim()
-    : "";
-  const fromQuery = url.searchParams.get("token") ?? "";
+  const bearer = /^Bearer\s+(.+)$/i.exec(header)?.[1]?.trim() ?? "";
 
-  if (bearer === token || fromQuery === token) return null;
+  if (token && bearer === token) return null;
 
   return new Response(JSON.stringify({ error: "unauthorized" }), {
     status: 401,
