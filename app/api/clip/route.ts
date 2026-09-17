@@ -1,4 +1,5 @@
 import { captureActionGif, type ClipAction } from "../../../lib/clip";
+import { authorize } from "../../../lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,6 +11,9 @@ const numberParam = (value: string | null, fallback: number) => {
 };
 
 export async function GET(request: Request) {
+  const denied = authorize(request);
+  if (denied) return denied;
+
   const params = new URL(request.url).searchParams;
   const url = params.get("url");
   if (!url) return new Response("Missing required url query parameter", { status: 400 });
