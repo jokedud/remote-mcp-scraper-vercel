@@ -1,4 +1,5 @@
 import type { Page } from "puppeteer-core";
+// @ts-expect-error gifenc does not ship declarations.
 import { GIFEncoder, applyPalette, quantize } from "gifenc";
 // jpeg-js 0.4.x has no bundled TypeScript declarations; its runtime exports
 // the decoder object consumed below.
